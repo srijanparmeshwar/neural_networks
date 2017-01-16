@@ -13,4 +13,3 @@ function [network] = create_network(D_in, D_out, H, f, df, out_f, dout_f, alpha)
     end
     network = create(D_in, D_out, H, [F, {out_f}], [D, {dout_f}], alpha);
 end
-

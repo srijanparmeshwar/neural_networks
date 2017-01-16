@@ -1,6 +1,7 @@
 function [Y, network, d] = fc_net(network, X, trainY, rate, alpha)
 %fc_net Fully connected feedforward network implementation.
-% Pass trainY to train network. Uses gradient descent with momentum.
+% Pass trainY to train network. Uses Adam optimisation
+% (http://sebastianruder.com/optimizing-gradient-descent/index.html#adam).
     
     train = nargin > 2;
     L = network.depth;
@@ -12,6 +13,8 @@ function [Y, network, d] = fc_net(network, X, trainY, rate, alpha)
         inputs = cell(1, L);
         derivatives = network.derivatives;
         V = network.V;
+        M = network.M;
+        t = network.t;
     end
     Y = X;
     for index = 1:(L - 1)
@@ -47,7 +50,8 @@ function [Y, network, d] = fc_net(network, X, trainY, rate, alpha)
             X = inputs{index};
             derivative = derivatives{index};
             weights = W{index};
-            velocity = V{index};
+            v_t = V{index};
+            m_t = M{index};
 
             % Derivative of nonlinearity.
             f_in = weights * X;
@@ -56,19 +60,27 @@ function [Y, network, d] = fc_net(network, X, trainY, rate, alpha)
 
             % Derivative of affine layer.
             w_i1 = weights(:, 2:end)';
-            velocity = network.decay * velocity - rate * delta_i * X';
-            weights = weights + velocity;
+            
+            % Adam optimisation.
+            g_t = delta_i * X';
+            m_t = 0.9 * m_t + 0.1 * g_t;
+            v_t = 0.999 * v_t + 0.001 * g_t .^ 2;
+            m_td = m_t / (1 - power(0.9, t));
+            v_td = v_t / (1 - power(0.999, t));
+            weights = weights - rate * (m_td ./ (sqrt(v_td) + 1E-8));
             if index < L - 1
                 weights = (1 - alpha) * weights;
             end
             
             W{index} = weights;
-            V{index} = velocity;
+            V{index} = v_t;
+            M{index} = m_t;
             delta_i = w_i1 * delta_i;
         end
         
         network.W = W;
         network.V = V;
+        network.M = M;
+        network.t = t + 1;
     end
-
 end

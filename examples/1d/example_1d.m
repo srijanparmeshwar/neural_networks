@@ -8,7 +8,7 @@ close all;
 f = @(X) sin(2 * X) - 0.5 * sin(0.1 * X + 0.3);
 % f = @(X) 0.01 * (0.5 * X .^ 3 - 0.5 * X .^ 2 + X - 1);
 
-N = 40;
+N = 60;
 noise = 0.1;
 
 range = 5;
@@ -18,14 +18,15 @@ trainY = f(trainX) + noise * randn(size(trainX));
 testX = linspace(-range - 1, range + 1, 200);
 testY = f(testX);
 
-network = create_network(1, 1, [12], @gabor_activation, @dgabor, @linear_activation, @dlinear, 0.5);
-rate = 0.2;
-regularisation = 0.005;
+network = create_network(1, 1, [6], @gabor_activation, @dgabor, @linear_activation, @dlinear, 0.5);
+rate = 0.1;
+regularisation = 0.01;
 
 % Run batch gradient descent.
 tic;
+iter = 1;
 while toc < 10
-    network = train(network, trainX, trainY, rate, regularisation);
+    network = train(network, trainX, trainY, rate / log(1 + iter), regularisation);
     
     clf;
     hold on;
@@ -34,7 +35,6 @@ while toc < 10
     plot(testX, fc_net(network, testX));
     hold off;
     drawnow;
-    
     iter = iter + 1;
 end
 

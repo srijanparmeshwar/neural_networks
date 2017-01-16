@@ -21,13 +21,14 @@ testX = trainX;
 testY = f(testX);
 
 network = create_network(2, 1, [16], @gabor_activation, @dgabor, @linear_activation, @dlinear, 0.25);
-rate = 0.25;
-regularisation = 0.005;
+rate = 0.1;
+regularisation = 0.01;
 
 % Run batch gradient descent.
 tic;
+iter = 1;
 while toc < 10
-    network = train(network, trainX, trainY, rate, regularisation);
+    network = train(network, trainX, trainY, rate / log(1 + iter), regularisation);
     
     cla;
     hold on;
@@ -37,6 +38,8 @@ while toc < 10
     surf(X, Y, reshape(netY, N, N), ones(N, N));
     hold off;
     drawnow;
+    
+    iter = iter + 1;
 end
 
 figure, surf3d(linspace(-4.0, 4.0, 100), linspace(-4.0, 4.0, 100), @(x, y) fc_net(network, [x; y]));
