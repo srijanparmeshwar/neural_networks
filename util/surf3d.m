@@ -4,4 +4,3 @@ function [X, Y, Z] = surf3d(x, y, f)
     Z = reshape(f(X(:)', Y(:)'), size(X));
     surf(X, Y, Z);
 end
-
