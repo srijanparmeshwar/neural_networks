@@ -1,5 +1,8 @@
 % View image produced from a pretrained network.
 close all;
+addpath('../../networks');
+addpath('../../activations');
+addpath('../../util');
 load('obama_net.mat', 'network');
 network = compress(network);
 width = 400;
