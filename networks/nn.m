@@ -22,15 +22,15 @@ function [Y, network] = nn(network, X, trainY, rate, alpha)
         end
         
         deltas = Y - trainY;
-        delta_i = deltas / size(trainY, 2);
+        dLdY = deltas / size(trainY, 2);
         
         for layer_index = depth:-1:1
             layer = network{layer_index};
             
             dYdX = layer.dYdX(layer.W, layer.input);
             dYdW = layer.dYdW(layer.W, layer.input);
-            dLdW = layer.dLdW(delta_i, dYdW);
-            delta_i = layer.dLdY(delta_i, dYdX);
+            dLdW = layer.dLdW(dLdY, dYdW);
+            dLdY = layer.dLdY(dLdY, dYdX);
             
             layer.W = layer.W - rate * dLdW;
             network{layer_index} = layer;
