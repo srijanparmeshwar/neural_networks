@@ -1,6 +1,8 @@
 function [layer] = nn_affine(nX, nY, sigma)
 %nn_affine Affine layer.
     layer.W = sigma * randn(nY, nX + 1);
+    layer.M = zeros(size(layer.W));
+    layer.V = zeros(size(layer.W));
     layer.X = @(X) cat(1, ones(1, size(X, 2)), X);
     layer.Y = @(W, X) W * X;
     layer.dYdX = @(W, X) W(:, 2:end)';

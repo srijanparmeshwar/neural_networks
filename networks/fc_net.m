@@ -52,7 +52,7 @@ function [Y, network, d] = fc_net(network, X, trainY, rate, alpha)
             weights = W{index};
             v_t = V{index};
             m_t = M{index};
-
+            
             % Derivative of nonlinearity.
             f_in = weights * X;
             df = derivative(f_in);
